@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>
+                Sprite Demonstration
+            </title>            
+            <style type="text/css">
+                #draw-target {
+                    width:480px;
+                    height:320px;
+                    background-color:#ccf;
+                    position:relative;
+            }
+            </style>
+            <script type="text/javascript">
+							  // IE6 background image caching fix.
+							  // Include this JavaScript a the top of your page.
+							  try {
+								  	document.execCommand("BackgroundImageCache", false, true);
+							  } catch(e) {}
+						</script>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js">
+            </script>
+            <script type="text/javascript">
+		
+						var DHTMLSprite = function (params) {
+								var width = params.width,
+										height = params.height,
+										imagesWidth = params.imagesWidth,
+										$element = params.$drawTarget.append('<div/>').find(':last'),
+										elemStyle = $element[0].style,
+										mathFloor = Math.floor;
+								$element.css({
+										position: 'absolute',
+										width: width,
+										height: height,
+										backgroundImage: 'url(' + params.images + ')'
+								});
+								var that = {
+										draw: function (x, y) {
+												elemStyle.left = x + 'px';
+												elemStyle.top = y + 'px';
+										},
+										changeImage: function (index) {
+												index *= width;
+												var vOffset = -mathFloor(index / imagesWidth) * height;
+												var hOffset = -index % imagesWidth;
+												elemStyle.backgroundPosition = hOffset + 'px' + ' ' + vOffset + 'px';
+										},
+										show: function () {
+												elemStyle.display = 'block';
+										},
+										hide: function () {
+												elemStyle.display = 'none';
+										},
+										destroy: function () {
+												$element.remove();
+										}
+								};
+								return that;
+						};
+							var bouncySprite = function(params) {
+											var x = params.x,
+													y = params.y,
+													xDir = params.xDir, // x移动方向
+													yDir = params.yDir, // y移动方向
+													maxX = params.maxX, // 最大x位置
+													maxY = params.maxY, // 做大y位置
+													animIndex = 0,
+													that = DHTMLSprite(params);
+											/**
+											 * [moveAndDraw description]
+											 * 根据xDir方向对animIndex变量进行增或减，接着用取余操作将其维持到-4到+4之间，如果它是负的，纠正到对应的正索引。
+											 * 这原理是css雪碧图通过定位来获取局部图片，animIndex数量和sprite图数量保持一致。
+											 * 通过判断最大x最大y值来边界判定
+											 */
+											that.moveAndDraw = function() {                       
+													x += xDir;
+													y += yDir;
+													animIndex += xDir > 0 ? 1 : -1;
+													animIndex %= 5;
+													animIndex += animIndex < 0 ? 5: 0;
+													if ((xDir < 0 && x < 0) || (xDir > 0 && x >= maxX)) {
+															xDir = -xDir;
+													}
+													if ((yDir < 0 && y < 0) || (yDir > 0 && y >= maxY)) {
+															yDir = -yDir;
+													}
+													that.changeImage(animIndex);
+													that.draw(x, y);
+											};
+											return that;
+									};
+								
+                var bouncyBoss = function(numBouncy, $drawTarget) {
+                    var bouncys = [];
+                   
+										for (var i = 0; i < numBouncy; i++) {
+                        bouncys.push(bouncySprite({
+                            images: './images/cogs.png',
+                            imagesWidth: 256,
+                            width: 64,
+                            height: 64,
+                            $drawTarget: $drawTarget,
+                            x: Math.random() * ($drawTarget.width() - 64),
+                            y: Math.random() * ($drawTarget.height() - 64),
+                            xDir: Math.random() * 4 - 2,
+                            yDir: Math.random() * 4 - 2,
+                            maxX: $drawTarget.width() - 64,
+                            maxY: $drawTarget.height() - 64
+                        }));
+                    }
+                    var moveAll = function() {											
+                        var len = bouncys.length;
+                        for (var i = 0; i < len; i++) {
+                            bouncys[i].moveAndDraw();
+                        }                      					
+                        setTimeout(moveAll, 10);
+                    }
+                    moveAll();
+                };
+								
+                $(document).ready(function() {
+                    bouncyBoss(30, $('#draw-target'));
+                });
+            </script>
+        </head>              
+        <body>
+        	  <p>DHTML Demonstration. Lots of sprites moved and animated.</p>
+           
+            <div id="draw-target">
+            </div>           
+        </body>    
+    </html>

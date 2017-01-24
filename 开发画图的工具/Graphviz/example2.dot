@@ -1,0 +1,26 @@
+digraph G{
+
+	size = "4, 4";//图片大小
+	main[shape=box];/*形状*/
+
+	main->parse;
+	parse->execute;
+
+	main->init[style = dotted];//虚线
+
+	main->cleanup;
+
+	execute->{make_string; printf}//连接两个
+
+	init->make_string;
+
+	edge[color = red]; // 连接线的颜色
+
+	main->printf[style=bold, label="100 times"];//线的 label
+
+	make_string[label = "make a\nstring"]// \n, 这个node的label，注意和上一行的区别
+
+	node[shape = box, style = filled, color = ".7.3 1.0"];//一个node的属性
+
+	execute->compare;
+}

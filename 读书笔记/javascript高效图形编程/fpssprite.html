@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Sprite Demonstration
+    </title>
+    <style type="text/css">
+    #draw-target {
+        width: 480px;
+        height: 320px;
+        background-color: #ccf;
+        position: relative;
+    }
+    </style>
+    <script type="text/javascript">
+    // IE6 background image caching fix.
+    // Include this JavaScript a the top of your page.
+    try {
+        document.execCommand("BackgroundImageCache", false, true);
+    } catch (e) {}
+    </script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js">
+    </script>
+    <script type="text/javascript">
+    /*
+        提供跨浏览器应用速度保持一致功能，
+        它接受一个目标FPS参数，如果达不到，函数将调整移动速度使其至少看起来达到了。
+        elapsed : 从上次getInfo()调用开始的 毫秒数
+        coeff : 移动和动画计算中所用的速度。
+     */
+    var timeInfo = function(goalFPS) {
+        var oldTime, paused = true,
+            iterCount = 0,
+            totalFPS = 0;
+        return {
+            getInfo: function() {
+
+                if (paused === true) {
+                    paused = false;
+                    oldTime = +new Date();
+                    return {
+                        elapsed: 0,
+                        coeff: 0,
+                        FPS: 0,
+                        averageFPS: 0
+                    };
+                }
+
+                var newTime = +new Date();
+                var elapsed = newTime - oldTime;
+                oldTime = newTime;
+                var FPS = 1000 / elapsed;
+                iterCount++;
+                totalFPS += FPS;
+                return {
+                    elapsed: elapsed,
+                    coeff: goalFPS / FPS,
+                    FPS: FPS,
+                    averageFPS: totalFPS / iterCount
+                };
+            },
+            pause: function() {
+                paused = true;
+            }
+        };
+    };
+
+
+
+    var DHTMLSprite = function(params) {
+        var width = params.width,
+            height = params.height,
+            imagesWidth = params.imagesWidth,
+            $element = params.$drawTarget.append('<div/>').find(':last'),
+            elemStyle = $element[0].style,
+            mathFloor = Math.floor;
+        $element.css({
+            position: 'absolute',
+            width: width,
+            height: height,
+            backgroundImage: 'url(' + params.images + ')'
+        });
+        var that = {
+            draw: function(x, y) {
+                elemStyle.left = x + 'px';
+                elemStyle.top = y + 'px';
+            },
+            changeImage: function(index) {
+                index *= width;
+                var vOffset = -mathFloor(index / imagesWidth) * height;
+                var hOffset = -index % imagesWidth;
+                elemStyle.backgroundPosition = hOffset + 'px ' + vOffset + 'px';
+            },
+            show: function() {
+                elemStyle.display = 'block';
+            },
+            hide: function() {
+                elemStyle.display = 'none';
+            },
+            destroy: function() {
+                $element.remove();
+            }
+        };
+        return that;
+    };
+    var bouncySprite = function(params) {
+        var x = params.x,
+            y = params.y,
+            xDir = params.xDir,
+            yDir = params.yDir,
+            maxX = params.maxX,
+            maxY = params.maxY,
+            animIndex = 0,
+            that = DHTMLSprite(params);
+        that.moveAndDraw = function(tCoeff) {
+
+            x += xDir * tCoeff;
+            y += yDir * tCoeff;
+            animIndex += xDir > 0 ? 1 * tCoeff : -1 * tCoeff;
+            var animIndex2 = (animIndex % 5) >> 0;
+            animIndex2 += animIndex2 < 0 ? 5 : 0;
+
+            if ((xDir < 0 && x < 0) || (xDir > 0 && x >= maxX)) {
+                xDir = -xDir;
+            }
+            if ((yDir < 0 && y < 0) || (yDir > 0 && y >= maxY)) {
+                yDir = -yDir;
+            }
+            that.changeImage(animIndex2);
+            that.draw(x, y);
+        };
+        return that;
+    };
+    var bouncyBoss = function(numBouncy, $drawTarget) {
+        var bouncys = [],
+            timer = timeInfo(40);
+
+
+        for (var i = 0; i < numBouncy; i++) {
+            bouncys.push(bouncySprite({
+                images: './images/cogs.png',
+                imagesWidth: 256,
+                width: 64,
+                height: 64,
+                $drawTarget: $drawTarget,
+                x: Math.random() * ($drawTarget.width() - 64),
+                y: Math.random() * ($drawTarget.height() - 64),
+                xDir: Math.random() * 4 - 2,
+                yDir: Math.random() * 4 - 2,
+                maxX: $drawTarget.width() - 64,
+                maxY: $drawTarget.height() - 64
+            }));
+        }
+        var moveAll = function() {
+            var timeData = timer.getInfo();
+            var len = bouncys.length;
+            for (var i = 0; i < len; i++) {
+                bouncys[i].moveAndDraw(timeData.coeff);
+            }
+            $('#info1').text('FPS: ' + Math.floor(timeData.FPS));
+            $('#info2').text('Average FPS: ' + Math.floor(timeData.averageFPS));
+            $('#info3').text('Time Coefficient: ' + timeData.coeff.toFixed(2));
+            setTimeout(moveAll, 10);
+        }
+        moveAll();
+    };
+    $(document).ready(function() {
+        bouncyBoss(100, $('#draw-target'));
+    });
+    </script>
+</head>
+
+<body>
+    <p>DHTML Demonstration. Lots of spites moved and animated with time-adjustment. The speed of movement is adjusted so it looks like a consistent 40 frames per second update across different browsers and hardware. The actual frames per second achieved is shown below.</p>
+    <p>
+        <a href='/book'>
+            <<< Back</a>
+    </p>
+    <div id="draw-target">
+    </div>
+    <p id="info1"></p>
+    <p id="info2"></p>
+    <p id="info3"></p>
+</body>
+
+</html>

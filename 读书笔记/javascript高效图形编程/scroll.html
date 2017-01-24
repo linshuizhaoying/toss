@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>CSS Parallax</title> 
+    <style type="text/css">
+        body {
+            padding:0px;
+            margin:0px;           
+        }
+                
+        .layer {
+            position:absolute;          
+            height:256px;
+            width:100%;
+        }
+        
+        #back {
+            background: #3BB9FF url(back1.png);	   
+              
+        }
+        #middle{
+            background: transparent url(back2.png);        
+        
+        }
+        #front{
+            background: transparent url(back3.png);
+              
+        }
+    </style> 
+    <script type="text/javascript" 
+        src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js">
+    </script> 
+    
+    <script type="text/javascript">
+        $(function () {
+            var speed = 0,
+                
+                $back = $('#back'),     // Initial speed.
+                $middle = $('#middle'), // Cache layers as jQuery objects.
+                $front = $('#front'),
+                xPos = 0,               // Initial x position of background images.
+                $win = $(window);       // Cache jQuery reference to window.
+            // Respond to mouse move events.
+            $(document).mousemove(function (e) {
+                var halfWidth = $win.width()/2;
+                // Calculate speed based on mouse position.
+                // 0 (center of screen) to 1 at edges.                                
+                speed = e.pageX - halfWidth;
+                speed /= halfWidth;
+            });
+
+            // Kill speed on mouseout
+            $(document).mouseout(function (e) {
+                speed = 0;
+            });
+
+            // Every 30ms, update each layer's background position.
+            // The two front layers use a scaled up x position to
+            // create the parralax effect.
+            setInterval(function () {
+                $back.css({
+                    backgroundPosition: xPos + 'px 0px'
+                });
+                $middle.css({
+                    backgroundPosition: (xPos * 2) + 'px 0px'
+                });
+                $front.css({
+                    backgroundPosition: (xPos * 3) + 'px 0px'
+                });
+
+                // Update the background position.
+                xPos += speed;
+            }, 30);
+
+        });
+    </script>
+    
+</head>
+<body>
+    <div id = "back" class = "layer"></div>
+    <div id = "middle" class = "layer"></div>
+    <div id = "front" class = "layer"></div>
+</body>
+</html> 

@@ -1,0 +1,12 @@
+    digraph tree
+    {
+        nodesep=0.5;
+        charset="UTF-8";
+        rankdir=LR;
+        fixedsize=true;
+        node [style="rounded,filled", width=0, height=0, shape=box, fillcolor="#E5E5E5", concentrate=true]
+        "JavaScript" ->"Web前端"
+        "HTML" -> "Web前端"
+        "CSS" -> "Web前端"
+        "Node.js" -> "Web前端"
+    }

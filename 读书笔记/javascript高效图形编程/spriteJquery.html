@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>
+                Sprite Demonstration
+            </title>            
+            <style type="text/css">
+                .draw-target {
+                    width:320px;
+                    height:256px;                    
+                    position:relative;
+					float:left;
+					margin:5px;
+            }
+            </style>
+            <script type="text/javascript">
+							  // IE6 background image caching fix.
+							  // Include this JavaScript a the top of your page.
+							  try {
+								  	document.execCommand("BackgroundImageCache", false, true);
+							  } catch(e) {}
+						</script>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js">
+            </script>
+            <script type="text/javascript">     
+							;(function ($) {
+									$.fn.bouncyPlugin = function (option) {
+
+									var DHTMLSprite = function (params) {
+										var width = params.width,
+												height = params.height,
+												imagesWidth = params.imagesWidth,
+												$element = params.$drawTarget.append('<div/>').find(':last'),
+												elemStyle = $element[0].style,
+												mathFloor = Math.floor;
+										$element.css({
+												position: 'absolute',
+												width: width,
+												height: height,
+												backgroundImage: 'url(' + params.images + ')'
+									});
+										var that = {
+												draw: function (x, y) {
+														elemStyle.left = x + 'px';
+														elemStyle.top = y + 'px';
+												},
+												changeImage: function (index) {
+														index *= width;
+														var vOffset = -mathFloor(index / imagesWidth) * height;
+														var hOffset = -index % imagesWidth;
+														elemStyle.backgroundPosition = hOffset + 'px ' + vOffset + 'px';
+												},
+												show: function () {
+														elemStyle.display = 'block';
+												},
+												hide: function () {
+														elemStyle.display = 'none';
+												},
+												destroy: function () {
+														$element.remove();
+												}
+										};
+										return that;
+									};
+									var bouncySprite = function(params) {
+													var x = params.x,
+															y = params.y,
+															xDir = params.xDir,
+															yDir = params.yDir,
+															maxX = params.maxX,
+															maxY = params.maxY,
+															animIndex = 0,
+															that = DHTMLSprite(params);
+													that.moveAndDraw = function() {                       
+															x += xDir;
+															y += yDir;
+															animIndex += xDir > 0 ? 1 : -1;
+															animIndex %= 5;
+															animIndex += animIndex < 0 ? 5: 0;
+															if ((xDir < 0 && x < 0) || (xDir > 0 && x >= maxX)) {
+																	xDir = -xDir;
+															}
+															if ((yDir < 0 && y < 0) || (yDir > 0 && y >= maxY)) {
+																	yDir = -yDir;
+															}
+															that.changeImage(animIndex);
+															that.draw(x, y);
+													};
+													return that;
+									};
+									var bouncyBoss = function (numBouncy, $drawTarget) {
+											var bouncys = [];
+											for (var i = 0; i < numBouncy; i++) {
+													bouncys.push(bouncySprite({
+															images: 'images/cogs.png',
+															imagesWidth: 256,
+															width: 64,
+															height: 64,
+															$drawTarget: $drawTarget,
+															x: Math.random() * ($drawTarget.width() - 64),
+															y: Math.random() * ($drawTarget.height() - 64),
+															xDir: Math.random() * 4 - 2,
+															yDir: Math.random() * 4 - 2,
+															maxX: $drawTarget.width() - 64,
+															maxY: $drawTarget.height() - 64
+													}));
+											}
+											var moveAll = function () {
+													var len = bouncys.length;
+													for (var i = 0; i < len; i++) {
+															bouncys[i].moveAndDraw();
+													}
+													$drawTarget.css('display', 'block');
+													setTimeout(moveAll, 10);
+											}
+	//												setInterval(moveAll,20);
+											moveAll();
+									};
+									// 使用option对象属性作为选项，用这种方式给插件传入选项可以传入所有的参数。
+									// jqeury的extend函数融合了option属性，option属性具有优先权，他们不存在时才会使用默认值。
+									option = $.extend({}, $.fn.bouncyPlugin.defaults, option);
+									// 这个插件在找到的DOM元素列表上迭代，对每一个元素执行匿名函数。this指的是DOM元素列表中的当前元素，函数从this中创建一个jQuery对象.
+									return this.each(function () {
+											var $drawTarget = $(this);
+											$drawTarget.css('background-color', option.bgColor);
+											bouncyBoss(option.numBouncy, $drawTarget);
+									});
+									};
+
+									$.fn.bouncyPlugin.defaults = {
+											bgColor: '#f00',
+											numBouncy: 10
+									};
+							})(jQuery);
+			
+				
+				
+                $(document).ready(function() {
+                    $('.draw-target').bouncyPlugin( {numBouncy:20, bgColor: '#8ff'} );
+                });
+            </script>
+        </head>        
+        <body>
+        	<p>DHTML Demonstration. Lots of sprites handled via a jQuery plugin. Applied to four div elements on this page.</p>
+        
+            <div class="draw-target"></div>
+            <div class="draw-target"></div>
+           <div class="draw-target"></div>
+            <div class="draw-target"></div>
+        </body>    
+    </html>
