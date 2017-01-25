@@ -30,6 +30,10 @@ const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const revCollector = require('gulp-rev-collector'); //给资源文件加时间戳，rev替换文件名
 
+/* 2017-1-25 新的依赖包 */
+const newer = require('gulp-newer'); //增量更新
+var mocha = require('gulp-mocha'); //单元测试
+
 /* 主文件 	*/
 
 var webpackConfig = {
@@ -157,7 +161,7 @@ function dev() {
 			bsReload()
 		});
 	});
-	watch([src.js], function (event) {
+	f([src.js], function (event) {
 		var paths = watchPath(event, src.js, './dist/js/');
 		var sp = paths.srcPath.indexOf('\\') > -1 ? '\\' : '/';
 		
@@ -177,10 +181,13 @@ gulp.task('js', function () {
 
 gulp.task('images', function () {
 	gulp.src(src.images)
+	// 增量更新，加快gulp构建速度
+  .pipe(newer(dist.images))
 	.pipe(gulp.dest(dist.images));
 });
 gulp.task('fonts', function () {
 	return gulp.src(src.fonts)
+	.pipe(newer(dist.fonts))
 	.pipe(gulp.dest(dist.fonts));
 });
 gulp.task('js:build', function () {
@@ -271,3 +278,19 @@ gulp.task('cleancss', function () {
 	]);
 
 });
+
+/* 单元测试 单独出来 */
+gulp.task('mocha', function() {
+    return gulp.src(['test/*.js'], { read: false })
+        .pipe(mocha({ reporter: 'list' }))
+});
+
+gulp.task('test', function() {
+    gulp.watch(['lib/**', 'test/**'], ['mocha']);
+});
+
+
+
+
+
+

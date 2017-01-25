@@ -6,11 +6,15 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production gulp build",
     "dev": "cross-env NODE_ENV=dev gulp reload",
-    "test": "gulp test"
+    "test": "gulp test",
+    "mocha": "gulp mocha"
   },
   "author": "LinZhuiZhaoying",
   "license": "MIT",
   "dependencies": {
+    "gulp-mocha": "^3.0.1",
+    "gulp-newer": "^1.3.0",
+    "should": "^11.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.2.3",
@@ -42,10 +46,12 @@
     "gulp-watch": "^4.3.9",
     "gulp-watch-path": "^0.1.0",
     "json-loader": "^0.5.4",
+    "mocha": "^3.2.0",
     "node-sass": "^3.4.2",
     "precss": "^1.4.0",
     "run-sequence": "^1.1.5",
     "sass-loader": "^3.1.2",
+    "should": "^11.1.2",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "vinyl-named": "^1.1.0",

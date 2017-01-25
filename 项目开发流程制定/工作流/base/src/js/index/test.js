@@ -1,2 +1,2 @@
-const l = "Hello Linshui"
-console.log(l)
+'use strict';
+module.exports = () => 'Hello Linshuizhaoying';
