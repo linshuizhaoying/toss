@@ -84,7 +84,7 @@ const processes = [
 /*
    sass编译后放到dist目录的css文件夹中
    其余文件处理后输出到dist/相同文件夹中
-   html移到
+   html移到view目录下
  */
 const src = {
 	css: './src/css/**/*.css',
@@ -282,7 +282,7 @@ gulp.task('cleancss', function () {
 /* 单元测试 单独出来 */
 gulp.task('mocha', function() {
     return gulp.src(['test/*.js'], { read: false })
-        .pipe(mocha({ reporter: 'list' }))
+        .pipe(mocha({ reporter: 'nyan' }))
 });
 
 gulp.task('test', function() {
