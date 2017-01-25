@@ -10,6 +10,10 @@
 
 ## 开发说明
 
+目录结构：
+
+```
+
 ├── Doc
 │   └── 项目文档.md
 ├── README.md
@@ -44,6 +48,8 @@
     ├── contact-test.js
     └── index-test.js
 
+```
+
 ### 项目开发文档使用方式请看博客文章。
 
 ### 具体开发
@@ -74,4 +80,7 @@ js:
 ### 编译输出 `npm run build`
 ### 单元测试 `npm run mocha`
 ### 单元测试监听 `npm run test`
+
+## 需要其它功能可以自己修改Gulpfile
+
 
