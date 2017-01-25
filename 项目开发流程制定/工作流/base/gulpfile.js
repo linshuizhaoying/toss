@@ -255,7 +255,7 @@ gulp.task('css:build', function () {
 	
 });
 function build(cb) {
-	runSequence('clean','sass','css:build','js:build', 'ugjs:build', 'views:build', 'images', 'fonts',function() {
+	runSequence('clean','sass','css:build','js:build', 'ugjs:build', 'views:build', 'images', 'fonts','cleancss',function() {
 		cb && cb();
 	});
 }
@@ -263,4 +263,11 @@ gulp.task('clean', function () {
 	del([
 		'dist/**/*'
 	]);
+
+});
+gulp.task('cleancss', function () {
+	del([
+		'src/css'
+	]);
+
 });
