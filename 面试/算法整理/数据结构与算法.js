@@ -112,7 +112,6 @@ console.log(quickSort(nums))
 function selectionSort(numbers) {
   for (var i = 0; i < numbers.length; i++) {
     var min = i;
-    // Check the rest of the array: is anything smaller?
     for (var j = i + 1; j < numbers.length; j++) {
       if (numbers[j] < numbers[min]) {
         min = j;
