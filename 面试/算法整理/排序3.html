@@ -18,7 +18,7 @@ body {
 </style>
 
 <body>
-    <div id="restart">单击暂停，双击等该动画播放完毕重新生成下一组数据</div>
+    <div id="restart">单击暂停/继续，双击重置</div>
     <canvas id="canvas">
         <canvas>
 </body>
@@ -37,12 +37,7 @@ body {
     var stopId = requestAnimationFrame(Render);
 
 
-    function Restart() {
-        data = [];
-        CreateData(IntRandom(30, 20));
-        sort(data);
-        stopId = requestAnimationFrame(Render)
-    }
+
 
     function CreateData(val) {
         for (var i = 0; i <= val; i++)
@@ -96,7 +91,7 @@ body {
     };
 
     document.ondblclick = function() {
-      Restart();
+      window.location.reload()
     };
 
     var fps = 60; //每秒几帧
