@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>canvans动画排序 改</title>
+</head>
+<style>
+body {
+    background-color: black;
+    text-align: center;
+}
+
+#restart {
+    color: white;
+    font-family: monospace;
+}
+</style>
+
+<body>
+    <div id="restart">单击暂停，双击等该动画播放完毕重新生成下一组数据</div>
+    <canvas id="canvas">
+        <canvas>
+</body>
+<script>
+! function() {
+
+    var canvas = document.getElementById('canvas');
+    var c = canvas.getContext('2d');
+    var data = [];
+    var state = [];
+    var stopFlag = false;
+    canvas.width = window.innerWidth - 30;
+    canvas.height = window.innerHeight - 35;
+    CreateData(IntRandom(30, 20));
+    sort(data);
+    var stopId = requestAnimationFrame(Render);
+
+
+    function Restart() {
+        data = [];
+        CreateData(IntRandom(30, 20));
+        sort(data);
+        stopId = requestAnimationFrame(Render)
+    }
+
+    function CreateData(val) {
+        for (var i = 0; i <= val; i++)
+            data[i] = IntRandom(200, 50);
+
+    }
+
+    function exchange(array, i, j) {
+        var t = array[i];
+        array[i] = array[j];
+        array[j] = t;
+    }
+
+
+
+    function sort(numbers) {
+        for (var i = 0; i < numbers.length; i++) {
+            /*
+             * 当已排序部分的当前元素大于value，
+             * 就将当前元素向后移一位，再将前一位与value比较
+             */
+            for (var j = i; j > 0 && numbers[j] < numbers[j - 1]; j--) {
+                // If the array is already sorted, we never enter this inner loop!
+                exchange(numbers, j, j - 1);
+                state.push(JSON.parse(JSON.stringify(numbers)));
+                console.log("此时数组:" + numbers)
+            }
+        }
+
+    }
+
+    function Draw() {
+        var posX = 0
+        var s = state.shift() || [];
+        for (var i = 0; i <= s.length - 1; i++) {
+            c.fillStyle = RandomColor(i);
+            c.fillRect(posX, canvas.height, 5, -s[i]);
+
+            posX += 12;
+        }
+    }
+
+    document.onclick = function() {
+      if(!stopFlag){
+        cancelAnimationFrame(stopId)
+        stopFlag = !stopFlag
+      }else{
+        stopId = requestAnimationFrame(Render)
+        stopFlag = !stopFlag
+      }
+    };
+
+    document.ondblclick = function() {
+      Restart();
+    };
+
+    var fps = 60; //每秒几帧
+
+    var lastExecution = new Date().getTime();
+
+    function Render() {
+        if (state.length > 0) { //动画播放，没播完继续
+
+            var now = new Date().getTime();
+
+            if ((now - lastExecution) > (1000 / fps)) {
+                Clear();
+                Draw();
+                lastExecution = new Date().getTime();
+            }
+
+            stopId = requestAnimationFrame(Render);
+
+        }
+    }
+
+    function Clear() {
+        c.fillStyle = "black";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function RandomColor(i) {
+        var n = Math.random() * 360;
+        return "hsl(" + parseInt(i) + ", 100%, 50%)"
+    }
+
+    function IntRandom(max, min) {
+        return Math.floor(Math.random() * max + min);
+    }
+
+}()
+</script>
+
+</html>
