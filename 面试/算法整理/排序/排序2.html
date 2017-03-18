@@ -1,0 +1,98 @@
+<!doctype html> 
+<html> 
+<head> 
+    <meta charset="utf-8"> 
+    <title>canvans动画排序</title> 
+</head>
+<style>
+body {
+  background-color: black;
+  text-align: center;
+}
+
+#restart {
+  color: white;
+  font-family: monospace;
+}	
+</style>
+<body>
+
+<div id="restart">重新生成数据并排序</div>
+<canvas id="canvas"><canvas>
+
+</body>
+<script>
+!function(){
+
+  var canvas = document.getElementById('canvas'); 
+  var c = canvas.getContext('2d');
+  var data = [];
+  canvas.width = window.innerWidth-30;
+  canvas.height = window.innerHeight-35;
+  CreateData(IntRandom(30, 20));
+  Render();
+
+
+  function Restart() {
+    data = [];
+    CreateData(IntRandom(30, 20));
+  }
+
+  function CreateData(val) {
+    for(var i = 0; i <= val; i++) 
+      data[i] = IntRandom(200, 50);
+   
+  }
+
+  function BubbleSort() {
+
+    var temp;
+    for(var i = 0; i <= data.length-1; i++) {
+      if(data[i] > data[i+1]) {
+        temp = data[i];
+        data[i] = data[i+1];
+        data[i+1] = temp;
+      }
+    }
+  }
+
+  function Draw() {
+    var posX = 0
+
+    for(var i = 0; i <= data.length-1; i++) {
+      c.fillStyle = RandomColor(i);
+      c.fillRect(posX, canvas.height, 5, -data[i]);
+      
+      posX+=12;
+    }
+  }
+
+  document.onclick = function() {
+    Clear();
+    Restart();
+  };
+
+  function Render() {
+      requestAnimationFrame(Render);
+      Clear();
+      BubbleSort();
+      Draw();
+  }
+
+  function Clear() {
+    c.fillStyle = "black";
+    c.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function RandomColor(i) {
+    var n = Math.random() * 360;
+    return "hsl("+parseInt(i)+", 100%, 50%)"
+  }
+
+function IntRandom(max, min) {
+  return Math.floor(Math.random() * max + min);
+}	
+
+}()
+</script>
+</html>
