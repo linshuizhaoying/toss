@@ -2,29 +2,27 @@
 
 function Stack() {
     this.items = []
-    this.size = 0
 }
 Stack.prototype = {
     constructor: Stack, //重写整个Prototype的时候不会有constructor，因此要自己重写指向
     push: function(data) {
-        this.items[this.size++] = data //`后置运算`先算结果再运算本身,即先赋值再增加长度
+        this.items[this.items.length] = data 
+        return this.items
     },
     pop: function() {
-        this.size-- //需要手动减小
         return this.items.pop()
     },
     clear: function() {
         this.items = []
-        this.size = 0
     },
     peek: function() { // 这个方法主要是在Java里，查看栈顶的元素但是不移动它
-        return this.items[this.size - 1]
+        return this.items[this.items.length - 1]
     },
     empty: function() {
-        return this.size === 0
+        return this.items.length === 0
     },
     length: function() {
-        return this.items.length
+        return this.items.length+1
     }
 
 }

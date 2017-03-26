@@ -13,7 +13,6 @@
 
 用N+1长度的数组表示一个大小为N的二叉堆，不使用数组第一个元素Array[0]
 
-
 堆的有序化为:打破堆的状态，然后再遍历堆并按照要求将堆的状态恢复。
 
 由下至上的堆有序化(上浮)：
@@ -28,34 +27,98 @@
 
 
 var tools = require('../tools.js')
-var newArr = tools.getRandomArr() 
+var newArr = tools.getRandomArr()
 
 
-function heapSort(arr) {
-  return sort(arr);
-
-  function sort (arr){
-    var N = arr.length - 1;
-    for(var k = N >> 2; k >= 1; k--) {
-      arr = sink(arr, k, N);
+function heapSort2(arr) {
+    function less(a, b) {
+        return a < b
     }
-    while(N > 1) {
-      arr[1] = [arr[N], arr[N] = arr[1]][0];
-      N--;
-      arr = sink(arr, 1, N);
+
+    function exch(arr, a, b) {
+        var temp = arr[a]
+        arr[a] = arr[b]
+        arr[b] = arr[a]
     }
-    return arr;
+    // 上浮
+    function swim(k) {
+        while (k > 1 && less(k / 2, k)) {
+            exch(k / 2, k)
+            k = k / 2
+        }
+    }
+
+    // 下沉
+    function sink(arr, k, N) {
+        while (2 * k <= N) {
+            var j = 2 * k
+            if (j < N && less(j, j + 1)) { j++ }
+            if (!less(k, j)) break;
+            exch(k, j)
+            k = j
+
+        }
+    }
+
+
+}
+
+
+// 具体实现
+function heapSort(array) {
+ 
+ function swap(array, i, j) {
+  var temp = array[i];
+  array[i] = array[j];
+  array[j] = temp;
+ }
+ 
+ function maxHeapify(array, index, heapSize) {
+  var iMax,
+   iLeft,
+   iRight;
+  while (true) {
+   iMax = index;
+   iLeft = 2 * index + 1;
+   iRight = 2 * (index + 1);
+ 
+   if (iLeft < heapSize && array[index] < array[iLeft]) {
+    iMax = iLeft;
+   }
+ 
+   if (iRight < heapSize && array[iMax] < array[iRight]) {
+    iMax = iRight;
+   }
+ 
+   if (iMax != index) {
+    swap(array, iMax, index);
+    index = iMax;
+   } else {
+    break;
+   }
   }
-  function sink(arr, k, N) {
-    while(2 * k <= N) {
-      var j = 2 * k;
-      if(j < N && arr[j] < arr[j + 1]) j++;
-      if(arr[k] >= arr[j]) break;
-      arr[k] = [arr[j], arr[j] = arr[k]][0];
-      k = j;
-    }
-    return arr;
+ }
+ 
+ function buildMaxHeap(array) {
+  var i,
+   iParent = Math.floor(array.length / 2) - 1;
+ 
+  for (i = iParent; i >= 0; i--) {
+   maxHeapify(array, i, array.length);
   }
+ }
+ 
+ function sort(array) {
+  buildMaxHeap(array);
+ 
+  for (var i = array.length - 1; i > 0; i--) {
+   swap(array, 0, i);
+   maxHeapify(array, 0, i);
+  }
+  return array;
+ }
+ 
+ return sort(array);
 }
 
 
@@ -63,15 +126,4 @@ console.log("原数组是:" + newArr)
 console.log("排序后:" + "\n")
 tools.show(heapSort(newArr))
 
-console.log("该数组是否已经排序完成:" + tools.binaryHeadChecker(heapSort(newArr),"up"))
-
-
-
-
-
-
-
-
-
-
-
+console.log("该数组是否已经排序完成:" + tools.binaryHeadChecker(heapSort(newArr), "up"))
